@@ -100,7 +100,7 @@ BeerApp.initLighting = function() {
     ShaderPrograms.lightingProgram.setUniform3f("lightDirection", lightDir[0], lightDir[1], lightDir[2]);
     ShaderPrograms.lightingProgram.setUniform3f("directionalLight", 1.2, 0.8, 1);
 
-    ShaderPrograms.lightingProgram.setUniform3f("pointLight", 1, 0.6, 0.6);
+    ShaderPrograms.lightingProgram.setUniform3f("pointLight", 1, 0.8, 0.82);
     ShaderPrograms.lightingProgram.setUniform3f("lightPos", lightPos[0], lightPos[1], lightPos[2]);
     ShaderPrograms.lightingProgram.setUniform1f("attenuationFactor", 0.05);
 
@@ -197,7 +197,7 @@ BeerApp.initBeerMug = function(sides) {
     var h = 2.3;
     var alpha = 2 * Math.PI / n;
 
-    var mugColor = [0.8, 0.8, 0.8, 0.25];
+    var mugColor = [0.8, 0.8, 0.8, 0.3];
     var mugColorSolid = [0.52, 0.52, 0.52, 1];
     var beerColor = this.beerColors['lager'];
     mug.addParam(mugColor);
@@ -288,8 +288,8 @@ BeerApp.initBeerMug = function(sides) {
     beer.height = 0;
     beer.sides = n;
 
-    var glass = new Material([0.774597, 0.774597, 0.774597], 0.1 * 128);
-    var liquid = new Material([0.774597, 0.774597, 0.774597], 0.5 * 128);
+    var glass = new Material([0.774597, 0.774597, 0.774597], 0.2 * 128);
+    var liquid = new Material([0.25, 0.25, 0.1], 0.1 * 128);
 
     this.mug = mug;
     this.beer = beer;
