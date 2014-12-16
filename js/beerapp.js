@@ -92,20 +92,20 @@ BeerApp.initPipeline = function() {
 BeerApp.initLighting = function() {
     var lightDir = vec3.create();
     vec3.normalize(lightDir, [1, -1, -0.6]);
-    vec3.normalize(lightDir, [0, -1, -0.6]);
-    var lightPos = this.lightPos = [-2, 3, 0];
+    vec3.normalize(lightDir, [1, -1, -1]);
+    var lightPos = this.lightPos = [1, 3, -3];
 
     ShaderPrograms.lightingProgram.use();
     ShaderPrograms.lightingProgram.setUniform3f("ambientLight", 0.2, 0.2, 0.15);
     ShaderPrograms.lightingProgram.setUniform3f("lightDirection", lightDir[0], lightDir[1], lightDir[2]);
     ShaderPrograms.lightingProgram.setUniform3f("directionalLight", 1.2, 0.8, 1);
 
-    ShaderPrograms.lightingProgram.setUniform3f("pointLight", 1, 0, 0);
+    ShaderPrograms.lightingProgram.setUniform3f("pointLight", 2, 0.4, 0.3);
     ShaderPrograms.lightingProgram.setUniform3f("lightPos", lightPos[0], lightPos[1], lightPos[2]);
     ShaderPrograms.lightingProgram.setUniform1f("attenuationFactor", 0.05);
 
     //ShaderPrograms.lightingProgram.setUniform3f("ambientLight", 0.1, 0.1, 0.1);
-    ShaderPrograms.lightingProgram.setUniform3f("directionalLight", 0, 0.4, 0.5);
+    //ShaderPrograms.lightingProgram.setUniform3f("directionalLight", 0.6, 0.6, 0.6);
 };
 
 BeerApp.updateLighting = function() {

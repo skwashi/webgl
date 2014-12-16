@@ -12,7 +12,6 @@ function Model(geometry, scale) {
 
 Model.prototype.updateMatrices = function(viewMatrix) {
     mat4.multiply(this.modelViewMatrix, viewMatrix, this.modelMatrix);
-    mat4.scale(this.modelViewMatrix, this.modelViewMatrix, this.scale);
 };
 
 Model.prototype.render = function(viewMatrix, program) {

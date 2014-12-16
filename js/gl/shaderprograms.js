@@ -62,7 +62,7 @@ ShaderPrograms.initPrograms = function() {
         "    float attenuation = 1.0 / (1.0 + attenuationFactor * (distance + attenuationFactor * distance * distance));\n" +
         "    float pointDiffuseFactor = max(0.0, dot(passNormal, surfToLight)) * attenuation;\n" +
         "    float diffuseFactor = max(0.0, -dot(passNormal, lightDirection));\n" +
-        "    gl_FragColor = vec4((ambientLight + directionalLight * diffuseFactor) * passColor.rgb + pointLight * pointDiffuseFactor, passColor.a);\n" +
+        "    gl_FragColor = vec4((ambientLight + directionalLight * diffuseFactor + pointLight * pointDiffuseFactor) * passColor.rgb, passColor.a);\n" +
         "}";
 
 
