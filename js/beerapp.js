@@ -106,7 +106,7 @@ BeerApp.initLighting = function() {
 
     //ShaderPrograms.lightingProgram.setUniform3f("ambientLight", 0.1, 0.1, 0.1);
     //ShaderPrograms.lightingProgram.setUniform3f("ambientLight", 0, 0, 0); // 0.1
-    ShaderPrograms.lightingProgram.setUniform3f("directionalLight", 0.6, 0.6, 0.6); //0.6
+    //ShaderPrograms.lightingProgram.setUniform3f("directionalLight", 0.6, 0.6, 0.6); //0.6
 };
 
 BeerApp.updateLighting = function() {
