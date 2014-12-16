@@ -34,7 +34,9 @@ BeerApp.init = function (canvas) {
         var height = canvas.height;
         var x = (evt.clientX-rect.left)/(rect.right-rect.left)*width;
         var y = (evt.clientY-rect.top)/(rect.bottom-rect.top)*height;
-        BeerApp.mousePos = {x: x - width/2, y: height / 2 - y};
+        BeerApp.mousePos = {x: 2*x/width - 1, y: 1 - 2 * y / height};
+        BeerApp.updateLightPos();
+        BeerApp.updateLighting();
     });
 
     canvas.addEventListener('click', function(evt) {
@@ -100,12 +102,13 @@ BeerApp.initLighting = function() {
     ShaderPrograms.lightingProgram.setUniform3f("lightDirection", lightDir[0], lightDir[1], lightDir[2]);
     ShaderPrograms.lightingProgram.setUniform3f("directionalLight", 1.2, 0.8, 1);
 
-    ShaderPrograms.lightingProgram.setUniform3f("pointLight", 2, 0.4, 0.3);
+    ShaderPrograms.lightingProgram.setUniform3f("pointLight", 1, 0.6, 0.6);
     ShaderPrograms.lightingProgram.setUniform3f("lightPos", lightPos[0], lightPos[1], lightPos[2]);
-    ShaderPrograms.lightingProgram.setUniform1f("attenuationFactor", 0.05);
+    ShaderPrograms.lightingProgram.setUniform1f("attenuationFactor", 0.1);
 
-    //ShaderPrograms.lightingProgram.setUniform3f("ambientLight", 0.1, 0.1, 0.1);
-    //ShaderPrograms.lightingProgram.setUniform3f("directionalLight", 0.6, 0.6, 0.6);
+    ShaderPrograms.lightingProgram.setUniform3f("ambientLight", 0.1, 0.1, 0.1);
+    //ShaderPrograms.lightingProgram.setUniform3f("ambientLight", 0, 0, 0); // 0.1
+    ShaderPrograms.lightingProgram.setUniform3f("directionalLight", 0.3, 0.3, 0.3); //0.6
 };
 
 BeerApp.updateLighting = function() {
@@ -118,9 +121,11 @@ BeerApp.updateLightPos = function() {
     var y = this.mousePos.y;
     var w = this.canvas.width;
     var h = this.canvas.width;
-    this.lightPos[0] = x * 4 / w;
-    this.lightPos[1] = y * 4 / h;
-    this.lightPos[2] = 2;
+    this.lightPos[0] = 8*x;
+    this.lightPos[1] = 8*y;
+    this.lightPos[2] = 0.3;
+    var invPV = mat4.invert(mat4.create(), mat4.mul(mat4.create(), this.pipeline.uPMatrix, this.pipeline.uVMatrix));
+    vec3.transformMat4(this.lightPos, this.lightPos, invPV);
 };
 
 BeerApp.initBeerColors = function() {
