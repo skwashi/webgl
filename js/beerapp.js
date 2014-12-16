@@ -104,7 +104,7 @@ BeerApp.initLighting = function() {
     ShaderPrograms.lightingProgram.setUniform3f("lightPos", lightPos[0], lightPos[1], lightPos[2]);
     ShaderPrograms.lightingProgram.setUniform1f("attenuationFactor", 0.05);
 
-    ShaderPrograms.lightingProgram.setUniform3f("ambientLight", 0.1, 0.1, 0.1);
+    //ShaderPrograms.lightingProgram.setUniform3f("ambientLight", 0.1, 0.1, 0.1);
     //ShaderPrograms.lightingProgram.setUniform3f("ambientLight", 0, 0, 0); // 0.1
     ShaderPrograms.lightingProgram.setUniform3f("directionalLight", 0.6, 0.6, 0.6); //0.6
 };
