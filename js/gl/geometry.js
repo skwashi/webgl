@@ -71,6 +71,23 @@ Geometry.prototype.addFace = function(face) {
     this.normals[count] = normal;
 };
 
+Geometry.prototype.computeNormals = function() {
+    this.normals = [];
+    _.forEach(this.faces, function (face) {
+        var normal = vec3.create();
+        var p1 = this.vertices[face[0][0]];
+        var p2 = this.vertices[face[1][0]];
+        var p3 = this.vertices[face[2][0]];
+        var v1 = vec3.create();
+        var v2 = vec3.create();
+        vec3.subtract(v1, p2, p1);
+        vec3.subtract(v2, p3, p2);
+        vec3.cross(normal, v1, v2);
+        vec3.normalize(normal, normal);
+        this.normals.push(normal);
+    }, this);
+};
+
 Geometry.prototype.addFaces = function (fs) {
     _.forEach(fs, function (f) {
         this.addFace(f);

@@ -35,8 +35,6 @@ BeerApp.init = function (canvas) {
         var x = (evt.clientX-rect.left)/(rect.right-rect.left)*width;
         var y = (evt.clientY-rect.top)/(rect.bottom-rect.top)*height;
         BeerApp.mousePos = {x: 2*x/width - 1, y: 1 - 2 * y / height};
-        BeerApp.updateLightPos();
-        BeerApp.updateLighting();
     });
 
     canvas.addEventListener('click', function(evt) {
@@ -95,7 +93,7 @@ BeerApp.initLighting = function() {
     var lightDir = vec3.create();
     vec3.normalize(lightDir, [1, -1, -0.6]);
     vec3.normalize(lightDir, [1, -1, -1]);
-    var lightPos = this.lightPos = [1, 3, -3];
+        var lightPos = this.lightPos = [1, 3, -3];
 
     ShaderPrograms.lightingProgram.use();
     ShaderPrograms.lightingProgram.setUniform3f("ambientLight", 0.2, 0.2, 0.15);
@@ -104,11 +102,11 @@ BeerApp.initLighting = function() {
 
     ShaderPrograms.lightingProgram.setUniform3f("pointLight", 1, 0.6, 0.6);
     ShaderPrograms.lightingProgram.setUniform3f("lightPos", lightPos[0], lightPos[1], lightPos[2]);
-    ShaderPrograms.lightingProgram.setUniform1f("attenuationFactor", 0.1);
+    ShaderPrograms.lightingProgram.setUniform1f("attenuationFactor", 0.05);
 
     ShaderPrograms.lightingProgram.setUniform3f("ambientLight", 0.1, 0.1, 0.1);
     //ShaderPrograms.lightingProgram.setUniform3f("ambientLight", 0, 0, 0); // 0.1
-    ShaderPrograms.lightingProgram.setUniform3f("directionalLight", 0.3, 0.3, 0.3); //0.6
+    ShaderPrograms.lightingProgram.setUniform3f("directionalLight", 0.6, 0.6, 0.6); //0.6
 };
 
 BeerApp.updateLighting = function() {
@@ -117,6 +115,8 @@ BeerApp.updateLighting = function() {
 };
 
 BeerApp.updateLightPos = function() {
+    if (!this.mousePos)
+        return;
     var x = this.mousePos.x;
     var y = this.mousePos.y;
     var w = this.canvas.width;
@@ -182,7 +182,7 @@ BeerApp.initBox = function() {
 
     mesh.bufferData();
 
-    var boxModel = new Model(mesh, vec3.set(vec3.create(), 4, 1, 1.5));
+    var boxModel = new Model(mesh, new Material([0.2, 0.1, 0.1], 0.05 * 128), vec3.set(vec3.create(), 4, 1, 1.5));
     mat4.translate(boxModel.modelMatrix, boxModel.modelMatrix, [0, -1.01, 0]);
     this.boxModel = boxModel;
     this.opaqueModels.push(boxModel);
@@ -288,11 +288,14 @@ BeerApp.initBeerMug = function(sides) {
     beer.height = 0;
     beer.sides = n;
 
+    var glass = new Material([0.774597, 0.774597, 0.774597], 0.1 * 128);
+    var liquid = new Material([0.774597, 0.774597, 0.774597], 0.5 * 128);
+
     this.mug = mug;
     this.beer = beer;
-    this.mugModel = new Model(mug);
-    this.beerModel = new Model(beer);
-    var model = new Model(mug);
+    this.mugModel = new Model(mug, glass);
+    this.beerModel = new Model(beer, liquid);
+    var model = new Model(mug, glass);
     mat4.translate(model.modelMatrix, model.modelMatrix, [3, 0, 0]);
     this.translucentModels.push(model);
     this.translucentModels.push(this.mugModel);
@@ -336,28 +339,34 @@ BeerApp.update = function() {
         this.setBeerHeight(beerHeight - 0.0005);
     }
 
+    this.updateLightPos();
+    this.updateLighting();
+    this.pipeline.update();
+
+    var viewMatrix = this.pipeline.uVMatrix;
+    _.forEach(this.opaqueModels, function (model) {model.updateMatrices(viewMatrix)});
+    this.beerModel.updateMatrices(viewMatrix);
+    _.forEach(this.translucentModels, function (model) {model.updateMatrices(viewMatrix)});
 };
 
 BeerApp.render = function() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    var viewMatrix = this.pipeline.uVMatrix;
+    this.pipeline.updatePrograms();
 
     _.forEach(this.opaqueModels, function (model) {
-        model.render(viewMatrix, ShaderPrograms.lightingProgram);
+        model.render(ShaderPrograms.lightingProgram);
     }, this);
 
     if (this.beer.height > 0) {
-        this.beerModel.render(viewMatrix, ShaderPrograms.lightingProgram);
+        this.beerModel.render(ShaderPrograms.lightingProgram);
     }
-
-    _.forEach(this.translucentModels, function (model) {model.updateMatrices(viewMatrix)});
 
     this.translucentModels.sort(function (modelA, modelB) {
         return modelA.modelViewMatrix[14] - modelB.modelViewMatrix[14];
     });
 
     _.forEach(this.translucentModels, function (model) {
-        model.render(viewMatrix, ShaderPrograms.lightingProgram);
+        model.render(ShaderPrograms.lightingProgram);
     }, this);
 
 };

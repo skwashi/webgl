@@ -5,16 +5,18 @@
 function Pipeline() {
     this.uPMatrix = mat4.create();
     this.uVMatrix = mat4.create();
-    this.uMMatrix = mat4.create();
     this.uVPMatrix = mat4.create();
-    this.uMVMatrix = mat4.create();
 
+    this.cameraMatrix = mat4.create();
+    this.cameraPosition = vec3.create();
     this.programs = [];
 }
 
 Pipeline.prototype.update = function() {
     mat4.multiply(this.uVPMatrix, this.uPMatrix, this.uVMatrix);
-    mat4.multiply(this.uMVMatrix, this.uVMatrix, this.uMMatrix);
+    mat4.invert(this.cameraMatrix, this.uVMatrix);
+    for (var i = 0; i < 3; i++)
+        this.cameraPosition[i] = this.cameraMatrix[12 + i];
 };
 
 Pipeline.prototype.watchProgram = function(program) {
@@ -29,6 +31,8 @@ Pipeline.prototype.updateMatrices = function(program) {
         program.setUniformMatrix4("uVMatrix", this.uVMatrix);
     if (program.hasUniform("uVPMatrix"))
         program.setUniformMatrix4("uVPMatrix", this.uVPMatrix);
+    if (program.hasUniform("uCameraPosition"))
+        program.setUniform3f("uCameraPosition", this.cameraPosition[0], this.cameraPosition[1], this.cameraPosition[2]);
 };
 
 Pipeline.prototype.updatePrograms = function() {
